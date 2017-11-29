@@ -18,6 +18,7 @@ Preguntas a Valeria con respuestas:
 
 
  - Cuando se refiere a que el mapeo es igual (1-1,2-2 y asi..) es porque no se debe hacer ninguna conversión como lo vimos en clase?
+ 
   Es el mapeo inicial de la tabla de página. Es configurar la tabla de páginas para que arranque con unos valores válidos. 
   
   
@@ -32,7 +33,7 @@ Las páginas virtuales van de 1 a 6, las físicas van de 1 a 6. La cantidad de b
 
 
  
-  por ejemplo, en el enunciado salen distintos registros por tiempo de reloj para saber cuales paginas van a ser referenciadas y reescritas, pero esos registros son siempre de 6 bits, al igual que la cantidad de paginas. No se si me explico bien
+  - por ejemplo, en el enunciado salen distintos registros por tiempo de reloj para saber cuales paginas van a ser referenciadas y reescritas, pero esos registros son siempre de 6 bits, al igual que la cantidad de paginas. No se si me explico bien
 
 No, son 6 bits si hay 6 marcos de página, si hay 3 marcos de página, serán 3 bits. Y como lo vamos a poner en decimal, máximo son 3 peticiones. 
 
