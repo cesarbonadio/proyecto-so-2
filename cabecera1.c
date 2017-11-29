@@ -34,7 +34,7 @@ int lineas_en_archivo(char *path){ //cuenta las lineas de la entrada
 
 
 
-int convertir_string(char *cadena){ // esat funcion es para ver si se imprime bien la cadena
+int convertir_string(char *cadena){ // esat funcion es para convertir la cadena y pasar todos los numeros al vector bit r
 
    printf ("\n\nEsta es la cadena : %s", cadena);
    int j=0;
@@ -86,7 +86,7 @@ int convertir_string(char *cadena){ // esat funcion es para ver si se imprime bi
 
 
 
-int asignar_bit_r_paginas(char *path, int lineas){ //ubica el numero mayor del archivo para saber la cantidad de paginas a trabajar
+int asignar_bit_r_paginas(char *path, int lineas){ // abre el archivo para leer cada linea
 
 	FILE *archivo;
 	char *caracter;
