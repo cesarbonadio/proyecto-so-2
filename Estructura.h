@@ -11,6 +11,7 @@ const int SI = 1;
 const int NO = 0;
 
 const int cantBits = 8;
+const int maxPaginasVirtuales = 16;
 const char* abecedario = "ABCDEFGHIJKLMNÑOPQRSTUVWXYZ";
 
 
@@ -21,21 +22,12 @@ struct TablaDePaginas{
 
    int numeroDePagina;
    int enRAM;
-   char *marcoDePagina;
-
-   TablaDePaginas *prox;
-
-};
-
-
-//Estructura que contiene lo contadores de las paginas que se encuentran en RAM
-struct RAM{
-
-   char *marcoDePagina; 
+   
+   int marcoDePagina;
    int contador [cantBits];
    int bitR;
 
-   RAM *prox;
+   TablaDePaginas *prox;
 
 };
 
@@ -55,7 +47,6 @@ struct InterrupcionesDeReloj{
 
 TablaDePaginas *tabla = NULL;
 InterrupcionesDeReloj *interrupciones = NULL;
-RAM *memoria = NULL;
 
 
 
@@ -66,13 +57,16 @@ void cargarArchivotxt(const char *ubicacion);
 void agregarInterrupcion(InterrupcionesDeReloj **p , char *demanda);
 InterrupcionesDeReloj* agregarDemanda(char *demanda);
 
-void inicializarMarcoDePagina(int cant);
+void iniciarTablaDePaginas(int cantDeMarcos);
 
-char* subString(char *cadenaFuente, int desde, int hasta);
+void agregarPagina(TablaDePaginas **p, int demanda);
+void inicializarPagina(TablaDePaginas **aux, int numPagina);
+void agregarMarco(TablaDePaginas **aux, int numMarco, int pos);
+
+void subString(char *cadenaDestino, char *cadenaFuente, int desde, int hasta);
 
 void mostrarInterrupciones();
-void mostrarMarcosDePagina();
-
+void mostrarPaginas();
 
 
 // --------- IMPLEMENTACIÓN ------------
@@ -107,6 +101,9 @@ de lo contrario, sale la alerta "Violación de segmento (`core' generado)" */
       }
 
       fclose(archivo);
+
+      //Libera recursos
+      free(demanda);
 
    }
 
@@ -145,7 +142,7 @@ void agregarInterrupcion(InterrupcionesDeReloj **p , char *demanda){
 InterrupcionesDeReloj* agregarDemanda(char *demanda){
 
    int numAcum, posDemanda = 0;
-   char *demandaToInt;
+   char *demandaToInt = new char;
 
    InterrupcionesDeReloj *aux = new InterrupcionesDeReloj;
 
@@ -157,7 +154,7 @@ InterrupcionesDeReloj* agregarDemanda(char *demanda){
       while( (demanda[i]!=',')&&(demanda[i]!='\n') ){
 
          /*Es necesario usar esta función debido a que atoi solo acepta (char*) y no un (char), por lo que si se intenta usar paginasDemandadas[x] no lo permite la función atoi*/
-         demandaToInt = subString(demanda,i,i);
+         subString(demandaToInt,demanda,i,i);
 
          numAcum = (numAcum * 10) + ( atoi(demandaToInt) );
          i++;
@@ -177,64 +174,94 @@ InterrupcionesDeReloj* agregarDemanda(char *demanda){
    //Se asigna la cantidad de páginas demandadas
    aux->cantDemandas = posDemanda;
 
+   //Libera recursos
+   free(demandaToInt);
+
    return aux;
 
 }
 
 
-void inicializarMarcoDePagina(int cant){
+void iniciarTablaDePaginas(int cantDeMarcos){
 
-   RAM *aux = memoria;
-   RAM *temp = new RAM;
+   //Inicializa la tabla de página sin marcos de pagina
+   for(int i = 1; i <= maxPaginasVirtuales; i++)
+      agregarPagina(&tabla,i);
 
-   printf("--- 1 \n");
+   //Inicializa los marcos de página
+   for(int j = 1; j <= cantDeMarcos; j++)
+      agregarMarco(&tabla,j,j);
 
-   char* abc = new char;
-   strcpy(abc,abecedario);
-   
-   //Inicializa el contador
-   for(int j = 0; j < cantBits; j++)
-      temp->contador[j] = 0;
-
-   //Inicializa el bit_R
-   temp->bitR = 0;
-
-   printf("--- 3 %s \n", abc);
-
-   char *prueba = subString(abc,1,6);
-
-   printf("--- 7 \n");
-   temp->marcoDePagina = prueba;
-
-   for(int i = 0; i < cant; i++){
-
-      printf("--- 6 \n");
-
-      printf("--- 5 \n");
-
-      //temp->marcoDePagina = subString(abc,i,i);
-
-      printf("--- 4 \n");
-
-      //
-
-      //aux = temp;
-      //aux = aux->prox;
-
-   }
-   
-   printf("--- 2 \n");
 
 }
 
 
-char* subString(char *cadenaFuente, int desde, int hasta){
+//NOTA: Se debe enviar el puntero x como NULL
+void agregarPagina(TablaDePaginas **p, int numPagina){
+
+   if( (*p) != NULL){
+
+      //Se agrega una Nueva Página
+      if( (*p)->prox == NULL){
+
+         TablaDePaginas *aux = new TablaDePaginas;
+         inicializarPagina(&aux, numPagina);
+
+         //Se une la Nueva tabla de página a la estructura global de tablas
+         (*p)->prox = aux;
+
+      }
+      else
+         agregarPagina( &((*p)->prox), numPagina);
+   }
+   //Primera Página
+   else{
+
+      *p = new TablaDePaginas;
+      inicializarPagina(p, numPagina);
+     
+   }
+
+}
+
+
+void inicializarPagina(TablaDePaginas **aux, int numPagina){
+
+   (*aux)->numeroDePagina = numPagina;
+   (*aux)->bitR = 0;
+   (*aux)->enRAM = NO;
+   (*aux)->marcoDePagina = 0;
+
+   for(int i = 0; i < cantBits; i++)
+      (*aux)->contador[i] = 0;
+
+   //Sumamente importante colocarlo, de lo contrario, se hace mal el enlace de las estructuras
+   (*aux)->prox = NULL;
+
+}
+
+
+void agregarMarco(TablaDePaginas **aux, int numMarco, int pos){
+
+   TablaDePaginas *p = *aux;
+
+   while( (p != NULL)&&( p->numeroDePagina != pos) )
+      p = p->prox;
+
+   if(p != NULL){
+      p->marcoDePagina = numMarco;
+      p->enRAM = SI;
+   }
+
+}
+
+
+void subString(char *cadenaDestino, char *cadenaFuente, int desde, int hasta){
 
    int pos = 0;
-   char *cadenaDestino = new char;
 
-   //En caso de que la cadena de origen sea NULL
-   if(cadenaFuente != NULL){
+   //En caso de que tanto la cadena de origen como la cadena de fuente sea diferente de NULL
+   if( (cadenaFuente != NULL)&&(cadenaDestino != NULL) ){
 
       for(int i = desde; i <= hasta; i++){
 
@@ -246,8 +273,6 @@ char* subString(char *cadenaFuente, int desde, int hasta){
       cadenaDestino[pos] = '\0';
 
    }
-
-   return cadenaDestino;
 
 }
 
@@ -275,27 +300,48 @@ void mostrarInterrupciones(){
 }
 
 
-void mostrarMarcosDePagina(){
+void mostrarPaginas(){
 
-   RAM *aux = memoria;
+   TablaDePaginas *aux = tabla;
 
-   printf("LISTA DE MARCOS DE PAGINA: \n");
+   printf("TABLA DE PAGINAS: \n");
+
+   printf("NUMERO DE PAGINA / CONTADOR / MARCO DE PAGINA / BIT_R / EN RAM \n");
 
    while(aux != NULL){
 
-      printf("Marco de Pagina: %s \n", aux->marcoDePagina);
+      printf("       (%i)         ", aux->numeroDePagina);
 
-      for(int i = 0; i < cantBits; i++) 
+      for(int i = 0; i < cantBits; i++)
          printf("%i", aux->contador[i]);
 
-      printf("\nBitR: %i \n", aux->bitR);
+      printf("       (%i)    ", aux->marcoDePagina);
+
+      printf("       (%i) ", aux->bitR);
+      printf("     (%i) ", aux->enRAM);
+
+      printf("\n");
 
       aux = aux->prox;
 
    }
 
-
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

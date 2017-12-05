@@ -11,12 +11,12 @@ int main(){
    cargarArchivotxt("Entrada.txt");
    mostrarInterrupciones();
 
-   printf("ENTRANDO \n");
+   printf("\n\n");
 
-   inicializarMarcoDePagina(6);
-   mostrarMarcosDePagina();
+   iniciarTablaDePaginas(8);
+   mostrarPaginas();
 
-   printf("SALIENDO \n");
+   printf("\n\n SALIENDO \n");
       
    printf("\n\n");
    return 0;
