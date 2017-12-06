@@ -12,7 +12,6 @@ const int NO = 0;
 
 const int cantBits = 8;
 const int maxPaginasVirtuales = 16;
-const char* abecedario = "ABCDEFGHIJKLMNÑOPQRSTUVWXYZ";
 
 
 // ------- ESTRUCTURAS -----------
