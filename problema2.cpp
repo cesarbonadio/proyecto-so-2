@@ -613,7 +613,7 @@ int main (int argc, char *argv[]) {
     ya_paso=0;
 
 
-    printf ("\n\nEjecutando algoritmo CSCAN:\n");
+    printf ("\n\nEjecutando algoritmo SCAN:\n");
     scan(&peticiones, &actual);
     reiniciar_atendidas(peticiones);
     ya_paso=0;
