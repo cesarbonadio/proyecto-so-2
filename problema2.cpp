@@ -420,7 +420,7 @@ void scan(peticion **p, peticion **aux){
         }
         (*aux)=(*aux)->prox;
       }
-      cscan((&*p), (&*aux));
+      scan((&*p), (&*aux));
   }
 
 
@@ -545,7 +545,7 @@ void scan(peticion **p, peticion **aux){
   
 
 
-  if (movimientos_brazo !=0)printf ("\nMovimientos del brazo en cscan: %i ", movimientos_brazo );
+  if (movimientos_brazo !=0)printf ("\nMovimientos del brazo en scan: %i ", movimientos_brazo );
   *aux = NULL;
  
 
