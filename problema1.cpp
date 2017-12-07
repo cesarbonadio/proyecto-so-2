@@ -4,6 +4,10 @@
 #include "Estructura.h"
 
 
+// -------- VARIABLES GLOBALES ---------
+int numInterrupcion = 0;
+
+
 //--------- CABECERA DE MÉTODOS -------------
 
 void manejarInterrupciones();
@@ -17,7 +21,8 @@ int convertirBinarioToDecimal(int *binario);
 
 void guardarInterrupcion();
 
-int numInterrupcion = 0;
+
+// ---------- IMPLEMENTACIÓN --------------
 
 int main(){
 
@@ -35,17 +40,15 @@ int main(){
    fflush(stdin);
 
    cargarArchivotxt(ruta);
-   mostrarInterrupciones();
-
-   printf("\n\n");
-
    iniciarTablaDePaginas(cantMarcos);
+
+   printf("\n");
+   mostrarInterrupciones();
 
    manejarInterrupciones();
 
-   printf("\n\n SALIENDO \n");
-      
-   printf("\n\n");
+   printf("\n\n Se ha procesado la lista de interrupciones con EXITO!!! \n\n");
+
    return 0;
 
 }
@@ -64,8 +67,6 @@ void manejarInterrupciones(){
       //Maneja todos los fallos de página
       for(int i = 0; i < inter->cantDemandas; i++)
          manejarDemanda(inter->demanda[i]);
-
-      printf("\n");
 
       moverDerecha();
       guardarInterrupcion();

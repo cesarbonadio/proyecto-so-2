@@ -13,9 +13,6 @@ const int NO = 0;
 const int cantBits = 8;
 const int maxPaginasVirtuales = 16;
 
-const int maximoCaracteres = 50;
-//Cantidad maxima de caracteres que se pueden leer
-
 
 // ------- ESTRUCTURAS -----------
 
@@ -61,6 +58,9 @@ InterrupcionesDeReloj* agregarDemanda(char *demanda);
 
 void iniciarTablaDePaginas(int cantDeMarcos);
 
+void validarMarcos(int cantDeMarcos);
+void iniciarArchivoSalida();
+
 void agregarPagina(TablaDePaginas **p, int demanda);
 void inicializarPagina(TablaDePaginas **aux, int numPagina);
 void agregarMarco(TablaDePaginas **aux, int numMarco, int pos);
@@ -78,6 +78,9 @@ void cargarArchivotxt(const char *ubicacion){
    char *demanda = new char;
    /*Se tiene que inicializar debido a que fgets debe recibir un puntero char inicializado,
 de lo contrario, sale la alerta "Violación de segmento (`core' generado)" */
+
+   const int maximoCaracteres = 50;
+   //Cantidad maxima de caracteres que se pueden leer
 
    FILE *archivo;
    archivo = fopen (ubicacion, "r");
@@ -186,10 +189,53 @@ void iniciarTablaDePaginas(int cantDeMarcos){
    for(int i = 1; i <= maxPaginasVirtuales; i++)
       agregarPagina(&tabla,i);
 
+   //Hace las respectivas validaciones de los marcos de página
+   validarMarcos(cantDeMarcos);
+
    //Inicializa los marcos de página
    for(int j = 1; j <= cantDeMarcos; j++)
       agregarMarco(&tabla,j,j);
 
+   //Limpia el archivo de salida
+   iniciarArchivoSalida();
+
+}
+
+
+void validarMarcos(int cantDeMarcos){
+
+   if( (cantDeMarcos < 1)||(cantDeMarcos > maxPaginasVirtuales) ){
+
+      printf("\nERROR en la cantidad de marcos de pagina. Debe estar en el rango [1,%i] \n\n", maxPaginasVirtuales);
+      exit(EXIT_FAILURE);
+
+   }
+
+   InterrupcionesDeReloj *aux = interrupciones;
+   while(aux != NULL){
+
+      if(aux->cantDemandas > cantDeMarcos){
+         printf("\nERROR en la cantidad de marcos de pagina. NO pueden ser menor a las demandas en una interrupcion de reloj \n\n");
+         exit(EXIT_FAILURE);
+      }
+
+      aux = aux->prox;
+   }
+
+}
+
+
+void iniciarArchivoSalida(){
+
+   FILE *archivo;
+   archivo = fopen ("Salida.txt", "w");
+
+   if (archivo == NULL){
+      printf("ERROR en la inicializacion del archivo de salida \n\n");
+      exit(EXIT_FAILURE);
+   }
+
+   fclose(archivo);
 
 }
 
@@ -296,30 +342,6 @@ void mostrarInterrupciones(){
    }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
