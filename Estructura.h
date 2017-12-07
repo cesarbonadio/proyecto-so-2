@@ -13,6 +13,9 @@ const int NO = 0;
 const int cantBits = 8;
 const int maxPaginasVirtuales = 16;
 
+const int maximoCaracteres = 50;
+//Cantidad maxima de caracteres que se pueden leer
+
 
 // ------- ESTRUCTURAS -----------
 
@@ -65,16 +68,12 @@ void agregarMarco(TablaDePaginas **aux, int numMarco, int pos);
 void subString(char *cadenaDestino, char *cadenaFuente, int desde, int hasta);
 
 void mostrarInterrupciones();
-void mostrarPaginas();
 
 
 // --------- IMPLEMENTACIÓN ------------
 
 
 void cargarArchivotxt(const char *ubicacion){
-
-   const int maximoCaracteres = 50;
-   //Cantidad maxima de caracteres que se pueden leer en una FILA desde el archivo txt
 
    char *demanda = new char;
    /*Se tiene que inicializar debido a que fgets debe recibir un puntero char inicializado,
@@ -297,36 +296,6 @@ void mostrarInterrupciones(){
    }
 
 }
-
-
-void mostrarPaginas(){
-
-   TablaDePaginas *aux = tabla;
-
-   printf("TABLA DE PAGINAS: \n");
-
-   printf("NUMERO DE PAGINA / CONTADOR / MARCO DE PAGINA / BIT_R / EN RAM \n");
-
-   while(aux != NULL){
-
-      printf("       (%i)         ", aux->numeroDePagina);
-
-      for(int i = 0; i < cantBits; i++)
-         printf("%i", aux->contador[i]);
-
-      printf("       (%i)    ", aux->marcoDePagina);
-
-      printf("       (%i) ", aux->bitR);
-      printf("     (%i) ", aux->enRAM);
-
-      printf("\n");
-
-      aux = aux->prox;
-
-   }
-
-}
-
 
 
 

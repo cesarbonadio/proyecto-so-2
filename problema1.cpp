@@ -7,6 +7,7 @@
 //--------- CABECERA DE MÉTODOS -------------
 
 void manejarInterrupciones();
+void agregarBitR(int demanda);
 void manejarDemanda(int demanda);
 
 void moverDerecha();
@@ -14,21 +15,33 @@ int falloDePagina();
 
 int convertirBinarioToDecimal(int *binario);
 
+void guardarInterrupcion();
+
+int numInterrupcion = 0;
 
 int main(){
 
-   printf("HOLA MUNDO \n\n");
+   char *ruta = new char;
+   int cantMarcos;
+
+   printf("\nIngrese el nombre del archivo: ");
+   scanf("%s", ruta);
+
+   //Vacia Buffer
+   fflush(stdin);
+
+   printf("\nIngrese la cantidad de marcos de Pagina: ");
+   scanf("%i", &cantMarcos);
+   fflush(stdin);
 
    cargarArchivotxt("Entrada.txt");
    mostrarInterrupciones();
 
    printf("\n\n");
 
-   iniciarTablaDePaginas(7);
-   mostrarPaginas();
+   iniciarTablaDePaginas(6);
 
    manejarInterrupciones();
-   mostrarPaginas();
 
    printf("\n\n SALIENDO \n");
       
@@ -44,20 +57,35 @@ void manejarInterrupciones(){
 
    while(inter != NULL){
 
-      for(int i = 0; i < inter->cantDemandas; i++){
+      //Agrega todos los bitR = 1
+      for(int i = 0; i < inter->cantDemandas; i++)
+         agregarBitR(inter->demanda[i]);
 
+      //Maneja todos los fallos de página
+      for(int i = 0; i < inter->cantDemandas; i++)
          manejarDemanda(inter->demanda[i]);
-
-      }
 
       printf("\n");
 
       moverDerecha();
-      mostrarPaginas();
+      guardarInterrupcion();
 
       inter = inter->prox;
 
    }
+
+}
+
+
+void agregarBitR(int demanda){
+
+   TablaDePaginas *aux = tabla;
+
+   while( (aux != NULL)&&(aux->numeroDePagina != demanda) )
+      aux = aux->prox;
+
+   if(aux != NULL)
+      aux->bitR = 1;
 
 }
 
@@ -69,17 +97,11 @@ void manejarDemanda(int demanda){
    while( (aux != NULL)&&(aux->numeroDePagina != demanda) )
       aux = aux->prox;
 
-   if(aux != NULL){
+   //Fallo de Página
+   if( (aux != NULL)&&(aux->enRAM == NO) ){
 
-      aux->bitR = 1;
-
-      //Fallo de Página
-      if(aux->enRAM == NO){
-
-         aux->marcoDePagina = falloDePagina();
-         aux->enRAM = SI;
-
-      }
+      aux->marcoDePagina = falloDePagina();
+      aux->enRAM = SI;
 
    }
 
@@ -166,6 +188,78 @@ int convertirBinarioToDecimal(int *binario){
 }
 
 
+void guardarInterrupcion(){
+
+   FILE *archivo;
+   archivo = fopen ("Salida.txt", "a");
+
+   if (archivo == NULL){
+      printf("ERROR en la apertura del archivo \n\n");
+      exit(EXIT_FAILURE);
+   }
+   else{
+
+      TablaDePaginas *aux = tabla;
+      
+      char *impresion = new char;
+      int size = 15;
+
+      numInterrupcion++;
+      snprintf(impresion,size,"%d",numInterrupcion);
+
+      fputs("               INTERRUPCION # ", archivo);
+      fputs(impresion, archivo);
+      fputs("\n", archivo);
+
+      fputs("NUMERO DE PAGINA / CONTADOR / MARCO DE PAGINA \n", archivo);
+
+      while(aux != NULL){
+
+         //Convierte una variable tipo int en char, guardandola en una variable temporal
+         snprintf(impresion,size,"%d",aux->numeroDePagina);
+
+         fputs("       ", archivo);
+         fputs(impresion, archivo);
+         fputs("          ", archivo);
+
+         if(aux->enRAM == 1){
+
+            if(aux->numeroDePagina < 10)
+               fputs(" ", archivo);
+
+            for(int i = 0; i < cantBits; i++){
+
+               snprintf(impresion,size,"%d",aux->contador[i]);
+               fputs(impresion, archivo);
+            }
+
+            
+            fputs("         ", archivo);
+            snprintf(impresion,size,"%d",aux->marcoDePagina);
+            fputs(impresion, archivo);
+
+         }
+         else
+            if(aux->numeroDePagina < 10)
+               fputs("   ----          --- ", archivo);
+            else
+               fputs("  ----          --- ", archivo);
+
+         fputs("\n",archivo);
+
+         aux = aux->prox;
+
+      }
+
+      fputs("\n----------------------------------------------\n",archivo);
+      free(impresion);
+
+      fclose(archivo);
+
+   }
+
+
+}
 
 
 
