@@ -4,6 +4,13 @@
 #include "Estructura.h"
 
 
+/*Proyecto de sistemas de operacion (problema 1)
+ * Integrantes:
+ * - César Bonadío
+ * - Miguel Ordoñez
+ */
+
+
 // -------- VARIABLES GLOBALES ---------
 int numInterrupcion = 0;
 
