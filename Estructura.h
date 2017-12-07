@@ -31,7 +31,7 @@ struct TablaDePaginas{
 };
 
 
-//Structura que contiene las demandas de paginas virtuales
+//Estructura que contiene las demandas de paginas virtuales
 struct InterrupcionesDeReloj{
 
    int *demanda;
@@ -271,6 +271,7 @@ void agregarPagina(TablaDePaginas **p, int numPagina){
 
 void inicializarPagina(TablaDePaginas **aux, int numPagina){
 
+   //Inicializa todos los atributos
    (*aux)->numeroDePagina = numPagina;
    (*aux)->bitR = 0;
    (*aux)->enRAM = NO;
@@ -331,7 +332,11 @@ void mostrarInterrupciones(){
 
       for(int i = 0; i < aux->cantDemandas; i++){
 
-         printf(" %i, ", aux->demanda[i]);
+         printf(" %i", aux->demanda[i]);
+
+         //Evita que el último elemento muestre la coma
+         if(i + 1 != aux->cantDemandas)
+            printf(",");
 
       }
 

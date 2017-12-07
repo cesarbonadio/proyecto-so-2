@@ -39,6 +39,7 @@ int main(){
    scanf("%i", &cantMarcos);
    fflush(stdin);
 
+   //Inicializa TODOS los procesos necesarios para comenzar el programa
    cargarArchivotxt(ruta);
    iniciarTablaDePaginas(cantMarcos);
 
@@ -46,8 +47,9 @@ int main(){
    mostrarInterrupciones();
 
    manejarInterrupciones();
-
    printf("\n\n Se ha procesado la lista de interrupciones con EXITO!!! \n\n");
+
+   free(ruta);
 
    return 0;
 
