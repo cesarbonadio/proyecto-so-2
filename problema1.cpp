@@ -34,12 +34,12 @@ int main(){
    scanf("%i", &cantMarcos);
    fflush(stdin);
 
-   cargarArchivotxt("Entrada.txt");
+   cargarArchivotxt(ruta);
    mostrarInterrupciones();
 
    printf("\n\n");
 
-   iniciarTablaDePaginas(6);
+   iniciarTablaDePaginas(cantMarcos);
 
    manejarInterrupciones();
 
